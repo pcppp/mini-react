@@ -16,6 +16,6 @@
     "noUnusedParameters": true,
     "noImplicitReturns": false,
     "skipLibCheck": true,
-    "baseUrl": "./padkages"
+    "baseUrl": "./packages"
   }
 }

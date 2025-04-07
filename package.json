@@ -4,24 +4,37 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:dev": "rimraf dist && rollup --bundleConfigAsCjs --config scripts/rollup/react.config.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.6.2",
+  "packageManager": "pnpm@6.35.1",
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
     "eslint": "^9.22.0",
     "globals": "^16.0.0",
     "husky": "^8.0.1",
-    "rollup": "^4.35.0",
+    "rimraf": "3.0.2",
+    "rollup": "3.1.0",
+    "rollup-plugin-generate-package-json": "^3.2.0",
+    "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.0"
   },
   "dependencies": {
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
-    "prettier": "^3.5.3"
+    "mini-react": "link:",
+    "prettier": "^3.5.3",
+    "react": "link:dist/node_models/react"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "link:dist/node_models/react",
+      "mini-react": "link:"
+    }
   }
 }
