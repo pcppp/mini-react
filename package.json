@@ -25,6 +25,7 @@
     "typescript-eslint": "^8.26.0"
   },
   "dependencies": {
+    "@rollup/plugin-replace": "5.0.1",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "mini-react": "link:",
