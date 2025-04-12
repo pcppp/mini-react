@@ -41,7 +41,7 @@ export class FiberNode {
     this.memoizedProps = null; // 工作之后的prop
     this.memoizedState = null; // 更新之后的state
     // 双缓存机制,允许保留两个版本的fiber树
-    // 这里alternate指向备用版本
+    // workInProgress <--> current
     this.alternate = null;
     this.updateQueue = null;
     // 检查副作用状态(effect)

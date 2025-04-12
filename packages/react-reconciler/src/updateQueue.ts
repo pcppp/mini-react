@@ -28,7 +28,7 @@ export const enqueueUpdate = <State>(
   updateQueue.shared.pending = update;
 };
 /**
- * @description: 消费update的方法
+ * @description: 消费update的方法,计算状态最新值
  * @param {*} State
  * @return {*}
  */
