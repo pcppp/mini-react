@@ -1,5 +1,5 @@
-import { Props, Key, Ref } from 'shared/ReactTypes';
-import { WorkTag } from './workTags';
+import { Props, Key, Ref, ElementType } from 'shared/ReactTypes';
+import { FunctionComponent, HostComponent, WorkTag } from './workTags';
 import { Flags, NoFlags } from './fiberFlags';
 import { Container } from 'hostConfig';
 // 不写死hostConfig的路径 -> 其他包都需要这个hostConfig实现
@@ -22,6 +22,7 @@ export class FiberNode {
   alternate: FiberNode | null;
   updateQueue: unknown;
   flags: Flags;
+  subtreeFlags: Flags;
   constructor(tag: WorkTag, pendingProps: Props, key: Key) {
     this.tag = tag;
     this.key = key;
@@ -51,6 +52,7 @@ export class FiberNode {
     // PassiveEffect：表示该节点有被动的副作用（如 useEffect）。
     // NoFlags：表示没有任何操作或副作用。
     this.flags = NoFlags;
+    this.subtreeFlags = NoFlags;
   }
 }
 // 真实的node节点
@@ -80,6 +82,7 @@ export const createWorkInProgress = (
     //update
     workInProgress.pendingProps = pendingProps;
     workInProgress.flags = NoFlags;
+    workInProgress.subtreeFlags = NoFlags;
   }
   workInProgress.type = current.type;
   workInProgress.updateQueue = current.updateQueue;
@@ -87,4 +90,16 @@ export const createWorkInProgress = (
   workInProgress.memoizedState = current.memoizedState;
   workInProgress.memoizedProps = current.memoizedProps;
   return workInProgress;
+};
+export const createFiberFormELement = (element: ElementType) => {
+  let { type, key, props } = element;
+  let fiberTag: WorkTag = FunctionComponent;
+  if (typeof type === 'string') {
+    //typeof <div/>  =>  'div'
+    fiberTag = HostComponent;
+  } else if (typeof type !== 'function' && __DEV__) {
+    console.warn('未声明的类型', element);
+  }
+  const fiber = new FiberNode(fiberTag, props, key);
+  return fiber;
 };

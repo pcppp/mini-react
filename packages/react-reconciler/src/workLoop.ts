@@ -1,6 +1,8 @@
 import { beginWork } from './beginWork';
+import { commitMutationEffects } from './commitWork';
 import { completeWork } from './completeWork';
 import { createWorkInProgress, FiberNode, FiberRootNode } from './fiber';
+import { MutationMask, NoFlags } from './fiberFlags';
 import { HostRoot } from './workTags';
 
 let workInProgress: FiberNode | null = null; // 正在更新中的FiberNode,更新完成后会取代当前的currentFiberNode
@@ -51,12 +53,40 @@ function renderRoot(root: FiberRootNode) {
   while (true) {
     try {
       workLoop();
+      break;
     } catch (error) {
       if (__DEV__) {
         console.warn('workLoop错误', error);
       }
       workInProgress = null;
     }
+  }
+  const finishedWork = root.current.alternate;
+  root.finishedWork = finishedWork;
+  commitRoot(root);
+}
+function commitRoot(root: FiberRootNode) {
+  const finishedWork = root.finishedWork;
+  if (finishedWork === null) {
+    return;
+  }
+  // 重置
+  root.finishedWork = null;
+  if (__DEV__) {
+    console.warn('commit阶段开始', finishedWork);
+  }
+  // 判断3个子阶段需要执行的操作
+  const subtreeHasEffect =
+    (finishedWork.subtreeFlags & MutationMask) !== NoFlags;
+  const rootHasEffect = (finishedWork.flags & MutationMask) !== NoFlags;
+  if (subtreeHasEffect || rootHasEffect) {
+    // beforeMutation
+    // mutation
+    commitMutationEffects(finishedWork);
+    root.current = finishedWork;
+    // layout
+  } else {
+    root.current = finishedWork;
   }
 }
 function workLoop() {
