@@ -94,8 +94,9 @@ function workLoop() {
     performUnitOfWork(workInProgress);
   }
 }
+
 function performUnitOfWork(fiber: FiberNode) {
-  const next = beginWork(fiber);
+  const next: FiberNode | null = beginWork(fiber);
   fiber.memoizedProps = fiber.pendingProps;
 
   if (next !== null) {
@@ -107,6 +108,8 @@ function performUnitOfWork(fiber: FiberNode) {
 function completeUnitOfWork(fiber: FiberNode) {
   let node: FiberNode | null = fiber;
   while (node !== null) {
+    console.log('completeUnitOfWork--ERROR--');
+
     completeWork(node);
     if (node.sibling !== null) {
       workInProgress = node.sibling;

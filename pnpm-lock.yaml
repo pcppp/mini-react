@@ -9,6 +9,7 @@ importers:
   .:
     specifiers:
       '@eslint/js': ^9.22.0
+      '@rollup/plugin-alias': 4.0.2
       '@rollup/plugin-commonjs': ^28.0.3
       '@rollup/plugin-replace': 5.0.1
       eslint: ^9.22.0
@@ -34,6 +35,7 @@ importers:
       react: link:dist/node_models/react
     devDependencies:
       '@eslint/js': 9.24.0
+      '@rollup/plugin-alias': 4.0.2_rollup@3.1.0
       '@rollup/plugin-commonjs': 28.0.3_rollup@3.1.0
       eslint: 9.24.0
       globals: 16.0.0
@@ -198,6 +200,19 @@ packages:
     resolution: {integrity: sha512-VzgHzGblFmUeBmmrk55zPyrQIArQN4vujc9shWytaPdB3P7qhi0cpaiKIr7tlCmFv2lYUwnLospIqjL9ZSAhhg==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
     dev: false
+
+  /@rollup/plugin-alias/4.0.2_rollup@3.1.0:
+    resolution: {integrity: sha512-1hv7dBOZZwo3SEupxn4UA2N0EDThqSSS+wI1St1TNTBtOZvUchyIClyHcnDcjjrReTPZ47Faedrhblv4n+T5UQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      rollup: 3.1.0
+      slash: 4.0.0
+    dev: true
 
   /@rollup/plugin-commonjs/28.0.3_rollup@3.1.0:
     resolution: {integrity: sha512-pyltgilam1QPdn+Zd9gaCfOLcnjMEJ9gV+bTw6/r73INdvzf1ah9zLIJBm+kW7R6IUFIQ1YO+VqZtYxZNWFPEQ==}
@@ -1227,6 +1242,11 @@ packages:
 
   /signal-exit/3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
+    dev: true
+
+  /slash/4.0.0:
+    resolution: {integrity: sha512-3dOsAHXXUkQTpOYcoAxLIorMTp4gIQr5IW3iVb7A7lFIp0VHhnynm9izx6TssdrIcVIESAlVjtnO2K8bg+Coew==}
+    engines: {node: '>=12'}
     dev: true
 
   /sort-keys/2.0.0:

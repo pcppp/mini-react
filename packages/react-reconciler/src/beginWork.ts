@@ -9,7 +9,7 @@ export const beginWork = (wip: FiberNode) => {
   switch (wip.tag) {
     case HostRoot:
       updateHostRoot(wip);
-      return;
+      return null;
     case HostComponent:
       updateHostComponent(wip);
     case HostText:
@@ -19,7 +19,7 @@ export const beginWork = (wip: FiberNode) => {
         console.warn('未实现的类型');
       }
   }
-  return;
+  return null;
 };
 function updateHostRoot(wip: FiberNode) {
   const baseState = wip.memoizedState; // 对于首屏渲染为null,并且也不需要处理props->根节点更关心应用的全局状态更新

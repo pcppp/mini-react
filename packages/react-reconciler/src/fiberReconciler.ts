@@ -1,6 +1,6 @@
-import { ElementType, ReactElement } from 'shared/ReactTypes';
+import { ElementType } from 'shared/ReactTypes';
 import { FiberNode, FiberRootNode } from './fiber';
-import { Container } from './hostConfig';
+import { Container } from 'hostConfig';
 import {
   createUpdateQueue,
   createUpdate,
