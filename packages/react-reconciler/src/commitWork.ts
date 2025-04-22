@@ -12,19 +12,18 @@ let nextEffect: FiberNode | null = null;
 export const commitMutationEffects = (finishedWork: FiberNode) => {
   nextEffect = finishedWork;
   while (nextEffect !== null) {
-    console.log('commitMutationEffects');
     const child: FiberNode | null = nextEffect.child;
     //向下遍历
     if (
       (nextEffect.subtreeFlags & MutationMask) !== NoFlags &&
       child !== null
     ) {
-      nextEffect = nextEffect.child;
+      nextEffect = child;
     } else {
       // nextEffect.flag & MutationMask !== No flags ->真正存在flags的fiberNode
-      commitMutationEffectsOnFiber(nextEffect);
       // 向上遍历
       up: while (nextEffect !== null) {
+        commitMutationEffectsOnFiber(nextEffect);
         const sibling: FiberNode | null = nextEffect.sibling;
         if (sibling !== null) {
           nextEffect = sibling;
@@ -42,10 +41,14 @@ const commitMutationEffectsOnFiber = (finishedWork: FiberNode) => {
     finishedWork.flags &= ~Placement;
   }
 };
-const commitPlacement = (finishWork: FiberNode) => {
-  const hostParent = getHostParent(finishWork);
-  if (hostParent !== null)
-    appendPlacementNodeIntoContainer(finishWork, hostParent);
+const commitPlacement = (finishedWork: FiberNode) => {
+  if (__DEV__) {
+    console.warn('执行Placement操作', finishedWork);
+  }
+  const hostParent = getHostParent(finishedWork);
+  if (hostParent !== null) {
+    appendPlacementNodeIntoContainer(finishedWork, hostParent);
+  }
 };
 /**
  * @description: 得到fiber的根node节点
@@ -55,10 +58,13 @@ const commitPlacement = (finishWork: FiberNode) => {
 function getHostParent(fiber: FiberNode): Container | null {
   let parent = fiber.return;
   while (parent) {
-    if (parent.tag === HostRoot) {
+    const parentTag = parent.tag;
+    if (parentTag === HostRoot) {
       return (parent.stateNode as FiberRootNode).container;
     }
-    if (parent.tag === HostComponent) return parent.stateNode as Container;
+    if (parentTag === HostComponent) {
+      return parent.stateNode as Container;
+    }
     parent = parent.return;
   }
   if (__DEV__) {
@@ -71,7 +77,7 @@ function appendPlacementNodeIntoContainer(
   hostParent: Container
 ) {
   if (finishedWork.tag === HostComponent || finishedWork.tag === HostText) {
-    appendChildToContainer(finishedWork.stateNode, hostParent);
+    appendChildToContainer(hostParent, finishedWork.stateNode);
     return;
   }
   const child = finishedWork.child;
@@ -80,6 +86,7 @@ function appendPlacementNodeIntoContainer(
     let sibling = child.sibling;
     while (sibling !== null) {
       appendPlacementNodeIntoContainer(sibling, hostParent);
+      sibling = sibling.sibling;
     }
   }
 }

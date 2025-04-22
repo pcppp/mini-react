@@ -8,10 +8,9 @@ export const beginWork = (wip: FiberNode) => {
   //  比较,再返回子fiberNode -> 递归处理子fiberNode
   switch (wip.tag) {
     case HostRoot:
-      updateHostRoot(wip);
-      return null;
+      return updateHostRoot(wip);
     case HostComponent:
-      updateHostComponent(wip);
+      return updateHostComponent(wip);
     case HostText:
       return null;
     default:
@@ -28,6 +27,7 @@ function updateHostRoot(wip: FiberNode) {
   updateQueue.shared.pending = null;
   const { memoizedState } = processUpdateQueue(baseState, pending);
   wip.memoizedState = memoizedState;
+
   const nextChildren = wip.memoizedState;
   reconcileChildren(wip, nextChildren); // 比较新旧子树的区别
   return wip.child;
@@ -49,9 +49,9 @@ function reconcileChildren(wip: FiberNode, children?: ReactElement) {
   const current = wip.alternate;
   if (current !== null) {
     //非首屏渲染
-    reconcileChildFibers(wip, current?.child, children);
+    wip.child = reconcileChildFibers(wip, current?.child, children);
   } else {
     //首屏渲染(需要渲染大量dom,要进行优化)
-    mountChildFibers(wip, null, children);
+    wip.child = mountChildFibers(wip, null, children);
   }
 }

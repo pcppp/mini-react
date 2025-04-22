@@ -37,7 +37,7 @@ function markUpdateFromFiberToRoot(fiber: FiberNode) {
     node = parent;
     parent = node.return;
   }
-  //HostRoot的stateNode会只想fiberRootNode实例
+  //HostRoot的stateNode会指向fiberRootNode实例
   if (node.tag === HostRoot) return node.stateNode;
   return null;
 }
@@ -108,14 +108,13 @@ function performUnitOfWork(fiber: FiberNode) {
 function completeUnitOfWork(fiber: FiberNode) {
   let node: FiberNode | null = fiber;
   while (node !== null) {
-    console.log('completeUnitOfWork--ERROR--');
-
     completeWork(node);
     if (node.sibling !== null) {
       workInProgress = node.sibling;
       return;
     } else {
       node = node.return;
+      workInProgress = node;
     }
   }
 }

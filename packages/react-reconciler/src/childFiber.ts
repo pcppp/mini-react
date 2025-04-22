@@ -59,6 +59,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
         reconcileSingleString(returnFiber, currentFiber, newChild)
       );
     }
+    return null;
   };
 }
 export const reconcileChildFibers = ChildReconciler(true);

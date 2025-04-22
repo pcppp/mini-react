@@ -68,10 +68,10 @@ export const jsx = (type: ElementType, config: any, ...maybeChildren: any) => {
     if ({}.hasOwnProperty.call(config, prop)) {
       props[prop] = val;
     }
-    const maybechildrenLength = maybeChildren.length;
-    if (maybechildrenLength)
-      if (maybechildrenLength === 1) {
-        props.chitdren = maybeChildren[0];
+    const maybeChildrenLength = maybeChildren.length;
+    if (maybeChildrenLength)
+      if (maybeChildrenLength === 1) {
+        props.children = maybeChildren[0];
       } else {
         props.children = maybeChildren;
       }

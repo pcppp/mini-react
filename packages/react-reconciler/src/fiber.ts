@@ -85,6 +85,7 @@ export const createWorkInProgress = (
     workInProgress.subtreeFlags = NoFlags;
   }
   workInProgress.type = current.type;
+  workInProgress.ref = current.ref;
   workInProgress.updateQueue = current.updateQueue;
   workInProgress.child = current.child;
   workInProgress.memoizedState = current.memoizedState;
@@ -101,5 +102,6 @@ export const createFiberFormELement = (element: ElementType) => {
     console.warn('未声明的类型', element);
   }
   const fiber = new FiberNode(fiberTag, props, key);
+  fiber.type = type;
   return fiber;
 };

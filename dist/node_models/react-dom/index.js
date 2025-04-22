@@ -91,6 +91,7 @@
           workInProgress.subtreeFlags = NoFlags;
       }
       workInProgress.type = current.type;
+      workInProgress.ref = current.ref;
       workInProgress.updateQueue = current.updateQueue;
       workInProgress.child = current.child;
       workInProgress.memoizedState = current.memoizedState;
@@ -108,6 +109,7 @@
           console.warn('未声明的类型', element);
       }
       const fiber = new FiberNode(fiberTag, props, key);
+      fiber.type = type;
       return fiber;
   };
 
@@ -190,6 +192,7 @@
               newChild !== null) {
               return placeSingleChild(reconcileSingleString(returnFiber, currentFiber, newChild));
           }
+          return null;
       };
   }
   const reconcileChildFibers = ChildReconciler(true);
@@ -199,10 +202,9 @@
       //  比较,再返回子fiberNode -> 递归处理子fiberNode
       switch (wip.tag) {
           case HostRoot:
-              updateHostRoot(wip);
-              return null;
+              return updateHostRoot(wip);
           case HostComponent:
-              updateHostComponent(wip);
+              return updateHostComponent(wip);
           case HostText:
               return null;
           default:
@@ -239,11 +241,11 @@
       const current = wip.alternate;
       if (current !== null) {
           //非首屏渲染
-          reconcileChildFibers(wip, current?.child, children);
+          wip.child = reconcileChildFibers(wip, current?.child, children);
       }
       else {
           //首屏渲染(需要渲染大量dom,要进行优化)
-          mountChildFibers(wip, null, children);
+          wip.child = mountChildFibers(wip, null, children);
       }
   }
 
@@ -268,18 +270,17 @@
   const commitMutationEffects = (finishedWork) => {
       nextEffect = finishedWork;
       while (nextEffect !== null) {
-          console.log('commitMutationEffects');
           const child = nextEffect.child;
           //向下遍历
           if ((nextEffect.subtreeFlags & MutationMask) !== NoFlags &&
               child !== null) {
-              nextEffect = nextEffect.child;
+              nextEffect = child;
           }
           else {
               // nextEffect.flag & MutationMask !== No flags ->真正存在flags的fiberNode
-              commitMutationEffectsOnFiber(nextEffect);
               // 向上遍历
               up: while (nextEffect !== null) {
+                  commitMutationEffectsOnFiber(nextEffect);
                   const sibling = nextEffect.sibling;
                   if (sibling !== null) {
                       nextEffect = sibling;
@@ -297,10 +298,14 @@
           finishedWork.flags &= ~Placement;
       }
   };
-  const commitPlacement = (finishWork) => {
-      const hostParent = getHostParent(finishWork);
-      if (hostParent !== null)
-          appendPlacementNodeIntoContainer(finishWork, hostParent);
+  const commitPlacement = (finishedWork) => {
+      {
+          console.warn('执行Placement操作', finishedWork);
+      }
+      const hostParent = getHostParent(finishedWork);
+      if (hostParent !== null) {
+          appendPlacementNodeIntoContainer(finishedWork, hostParent);
+      }
   };
   /**
    * @description: 得到fiber的根node节点
@@ -310,11 +315,13 @@
   function getHostParent(fiber) {
       let parent = fiber.return;
       while (parent) {
-          if (parent.tag === HostRoot) {
+          const parentTag = parent.tag;
+          if (parentTag === HostRoot) {
               return parent.stateNode.container;
           }
-          if (parent.tag === HostComponent)
+          if (parentTag === HostComponent) {
               return parent.stateNode;
+          }
           parent = parent.return;
       }
       {
@@ -324,7 +331,7 @@
   }
   function appendPlacementNodeIntoContainer(finishedWork, hostParent) {
       if (finishedWork.tag === HostComponent || finishedWork.tag === HostText) {
-          appendChildToContainer(finishedWork.stateNode, hostParent);
+          appendChildToContainer(hostParent, finishedWork.stateNode);
           return;
       }
       const child = finishedWork.child;
@@ -333,6 +340,7 @@
           let sibling = child.sibling;
           while (sibling !== null) {
               appendPlacementNodeIntoContainer(sibling, hostParent);
+              sibling = sibling.sibling;
           }
       }
   }
@@ -341,7 +349,7 @@
       /*
         归是从叶子到根节点的,可以将叶子一步步插入进入父节点,从而构建离屏的dom树
       */
-      wip.pendingProps;
+      const newProps = wip.pendingProps;
       const current = wip.alternate;
       // 构建DOM
       switch (wip.tag) {
@@ -351,7 +359,9 @@
                   // mount
                   // 构建DOM
                   const instance = createInstance(wip.type);
+                  // 在instance下面遍历wip的所有节点,并依次插入
                   appendAllChildren(instance, wip);
+                  wip.stateNode = instance;
               }
               bubbleProperties(wip);
               return null;
@@ -360,7 +370,7 @@
               else {
                   // mount
                   // 构建DOM
-                  const instance = createTextInstance(wip.type);
+                  const instance = createTextInstance(newProps.content);
                   wip.stateNode = instance;
               }
               bubbleProperties(wip);
@@ -383,7 +393,6 @@
   function appendAllChildren(parent, wip) {
       let node = wip.child;
       while (node !== null) {
-          console.log('appendAllChildren');
           if (node.tag === HostComponent || node.tag === HostText) {
               //是实际的dom元素
               appendInitialChild(parent, node?.stateNode);
@@ -455,7 +464,7 @@
           node = parent;
           parent = node.return;
       }
-      //HostRoot的stateNode会只想fiberRootNode实例
+      //HostRoot的stateNode会指向fiberRootNode实例
       if (node.tag === HostRoot)
           return node.stateNode;
       return null;
@@ -527,7 +536,6 @@
   function completeUnitOfWork(fiber) {
       let node = fiber;
       while (node !== null) {
-          console.log('completeUnitOfWork');
           completeWork(node);
           if (node.sibling !== null) {
               workInProgress = node.sibling;
@@ -535,6 +543,7 @@
           }
           else {
               node = node.return;
+              workInProgress = node;
           }
       }
   }
