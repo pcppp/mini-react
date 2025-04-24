@@ -9,11 +9,11 @@
   const HostComponent = 5; // <div></div>
   const HostText = 6; // 123
 
-  const NoFlags = 0b0000001;
+  const NoFlags = 0b0000000;
   //placement 标记是 React 渲染过程中的一种副作用,因为他是插入操作
-  const Placement = 0b0000010;
-  const Update = 0b0000100;
-  const ChildDeletion = 0b0001000;
+  const Placement = 0b0000001;
+  const Update = 0b0000010;
+  const ChildDeletion = 0b0000100;
   const MutationMask = Placement | Update | ChildDeletion; // 判断是否需要执行mutation操作
 
   // 不写死hostConfig的路径 -> 其他包都需要这个hostConfig实现
@@ -198,6 +198,13 @@
   const reconcileChildFibers = ChildReconciler(true);
   const mountChildFibers = ChildReconciler(false);
 
+  function renderWithHooks(wip) {
+      const Component = wip.type;
+      const props = wip.type;
+      const child = Component(props);
+      return child;
+  }
+
   const beginWork = (wip) => {
       //  比较,再返回子fiberNode -> 递归处理子fiberNode
       switch (wip.tag) {
@@ -207,6 +214,8 @@
               return updateHostComponent(wip);
           case HostText:
               return null;
+          case FunctionComponent:
+              return updateFunctionComponent(wip);
           default:
               {
                   console.warn('未实现的类型');
@@ -214,6 +223,11 @@
       }
       return null;
   };
+  function updateFunctionComponent(wip) {
+      const nextChildren = renderWithHooks(wip);
+      reconcileChildren(wip, nextChildren);
+      return wip.child;
+  }
   function updateHostRoot(wip) {
       const baseState = wip.memoizedState; // 对于首屏渲染为null,并且也不需要处理props->根节点更关心应用的全局状态更新
       const updateQueue = wip.updateQueue;
@@ -357,7 +371,7 @@
               if (current !== null && wip.stateNode) ;
               else {
                   // mount
-                  // 构建DOM
+                  // 构建离屏DOM树
                   const instance = createInstance(wip.type);
                   // 在instance下面遍历wip的所有节点,并依次插入
                   appendAllChildren(instance, wip);
@@ -378,6 +392,9 @@
           case HostRoot:
               bubbleProperties(wip);
               return null;
+          case FunctionComponent:
+              bubbleProperties(wip);
+              return null;
           default:
               {
                   console.warn('未处理的completeWork情况', wip);
@@ -385,7 +402,7 @@
       }
   };
   /**
-   * @description: 在parent节点中插入wip和他的所有子节点(仅关心真实DOM层次,对于抽象DOM -- Function Component不进行处理)
+   * @description: 构建离屏DOM树!在parent节点中插入wip和他的所有子节点(仅关心真实DOM层次,对于抽象DOM -- Function Component不进行处理)
    * @param {FiberNode} parent
    * @param {FiberNode} wip
    * @return {*}

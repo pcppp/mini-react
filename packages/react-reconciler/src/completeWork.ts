@@ -6,7 +6,12 @@ import {
   Instance,
 } from 'hostConfig';
 import { FiberNode } from './fiber';
-import { HostComponent, HostRoot, HostText } from './workTags';
+import {
+  FunctionComponent,
+  HostComponent,
+  HostRoot,
+  HostText,
+} from './workTags';
 import { NoFlags } from './fiberFlags';
 
 export const completeWork = (wip: FiberNode) => {
@@ -22,7 +27,7 @@ export const completeWork = (wip: FiberNode) => {
         // update
       } else {
         // mount
-        // 构建DOM
+        // 构建离屏DOM树
         const instance = createInstance(wip.type, newProps);
         // 在instance下面遍历wip的所有节点,并依次插入
         appendAllChildren(instance, wip);
@@ -44,6 +49,9 @@ export const completeWork = (wip: FiberNode) => {
     case HostRoot:
       bubbleProperties(wip);
       return null;
+    case FunctionComponent:
+      bubbleProperties(wip);
+      return null;
     default:
       if (__DEV__) {
         console.warn('未处理的completeWork情况', wip);
@@ -51,7 +59,7 @@ export const completeWork = (wip: FiberNode) => {
   }
 };
 /**
- * @description: 在parent节点中插入wip和他的所有子节点(仅关心真实DOM层次,对于抽象DOM -- Function Component不进行处理)
+ * @description: 构建离屏DOM树!在parent节点中插入wip和他的所有子节点(仅关心真实DOM层次,对于抽象DOM -- Function Component不进行处理)
  * @param {FiberNode} parent
  * @param {FiberNode} wip
  * @return {*}
