@@ -2,7 +2,7 @@ import generatePackageJson from 'rollup-plugin-generate-package-json';
 import { getBaseRollupPlugins, getPackageJSON, resolvePkgPath } from './utils';
 import alias from '@rollup/plugin-alias';
 
-const { name, module } = getPackageJSON('react-dom');
+const { name, module, peerDependencies } = getPackageJSON('react-dom');
 const pkgPath = resolvePkgPath(name);
 const pkgDistPath = resolvePkgPath(name, true);
 export default [
@@ -13,6 +13,7 @@ export default [
       name: 'index.js',
       format: 'umd',
     },
+    external: [...Object.keys(peerDependencies)],
     plugins: [
       ...getBaseRollupPlugins(),
       alias({

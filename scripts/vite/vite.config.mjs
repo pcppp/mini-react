@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [react(), replace({ __DEV__: true, preventAssignment: true })],
   resolve: {
     alias: [
+      //替换路径
       { find: 'react', replacement: resolvePkgPath('react') },
       { find: 'react-dom', replacement: resolvePkgPath('react-dom') },
       {

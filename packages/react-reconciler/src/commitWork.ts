@@ -38,7 +38,7 @@ const commitMutationEffectsOnFiber = (finishedWork: FiberNode) => {
   const flags = finishedWork.flags;
   if ((flags & Placement) !== NoFlags) {
     commitPlacement(finishedWork);
-    finishedWork.flags &= ~Placement;
+    finishedWork.flags &= ~Placement; // 清除placement标记
   }
 };
 const commitPlacement = (finishedWork: FiberNode) => {
