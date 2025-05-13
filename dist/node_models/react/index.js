@@ -1,8 +1,19 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, (global.index = global.index || {}, global.index.js = factory()));
-})(this, (function () { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.React = {}));
+})(this, (function (exports) { 'use strict';
+
+  const currentDispatcher = {
+      current: null,
+  };
+  function resolveDispatcher() {
+      const dispatcher = currentDispatcher.current;
+      if (dispatcher === null) {
+          throw new Error('未存在的dispatcher');
+      }
+      return dispatcher;
+  }
 
   const supportSymbol = typeof Symbol === 'function' && Symbol.for;
   const REACT_ELEMENT_TYPE = supportSymbol ? Symbol.for('react.element') : 0xeac7;
@@ -43,11 +54,23 @@
       return ReactElement(type, key, ref, props);
   };
 
+  // 内部数据共享层
+  const __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = {
+      currentDispatcher,
+  };
+  const useState = (initialState) => {
+      const dispatcher = resolveDispatcher();
+      return dispatcher.useState(initialState);
+  };
   var index = {
       version: '0.0.0',
       createElement: jsxDEV,
   };
 
-  return index;
+  exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+  exports.default = index;
+  exports.useState = useState;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
 
 }));
