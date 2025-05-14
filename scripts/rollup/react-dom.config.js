@@ -48,7 +48,7 @@ export default [
   {
     input: `${pkgPath}/test-utils.ts`,
     output: {
-      file: `${pkgDistPath}/test-utils.ts`,
+      file: `${pkgDistPath}/test-utils.js`,
       name: 'testUtils',
       format: 'umd',
     },

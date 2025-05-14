@@ -37,7 +37,7 @@ export const jsxDEV = (type: ElementType, config: any) => {
     }
     if (prop === 'ref') {
       if (prop !== undefined) {
-        ref = '' + val;
+        ref = val;
       }
       continue;
     }

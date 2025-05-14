@@ -13,6 +13,9 @@
   "license": "ISC",
   "packageManager": "pnpm@6.35.1",
   "devDependencies": {
+    "@babel/core": "^7.27.1",
+    "@babel/plugin-transform-react-jsx": "^7.27.1",
+    "@babel/preset-env": "^7.27.2",
     "@eslint/js": "^9.22.0",
     "@rollup/plugin-alias": "4.0.2",
     "@rollup/plugin-commonjs": "^28.0.3",
@@ -39,11 +42,11 @@
     "eslint-plugin-prettier": "^5.2.3",
     "mini-react": "link:",
     "prettier": "^3.5.3",
-    "react": "link:dist/node_models/react"
+    "react": "link:dist/node_modules/react"
   },
   "pnpm": {
     "overrides": {
-      "react": "link:dist/node_models/react",
+      "react": "link:dist/node_modules/react",
       "mini-react": "link:"
     }
   }

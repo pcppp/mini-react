@@ -86,6 +86,7 @@ export const createWorkInProgress = (
   }
   workInProgress.type = current.type;
   workInProgress.ref = current.ref;
+
   workInProgress.updateQueue = current.updateQueue;
   workInProgress.child = current.child;
   workInProgress.memoizedState = current.memoizedState;

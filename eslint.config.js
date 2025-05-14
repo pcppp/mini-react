@@ -20,6 +20,7 @@ export default [
       browser: true,
       es2021: true,
       node: true, // 启用 Node.js 环境
+      jest: true,
     },
     languageOptions: {
       ecmaVersion: 2020,
