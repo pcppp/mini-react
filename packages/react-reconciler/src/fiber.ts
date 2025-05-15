@@ -23,6 +23,7 @@ export class FiberNode {
   updateQueue: unknown;
   flags: Flags;
   subtreeFlags: Flags;
+  deletions: FiberNode[] | null;
   constructor(tag: WorkTag, pendingProps: Props, key: Key) {
     this.tag = tag;
     this.key = key;
@@ -53,6 +54,7 @@ export class FiberNode {
     // NoFlags：表示没有任何操作或副作用。
     this.flags = NoFlags;
     this.subtreeFlags = NoFlags;
+    this.deletions = null;
   }
 }
 // 真实的node节点
@@ -83,6 +85,7 @@ export const createWorkInProgress = (
     workInProgress.pendingProps = pendingProps;
     workInProgress.flags = NoFlags;
     workInProgress.subtreeFlags = NoFlags;
+    workInProgress.deletions = null;
   }
   workInProgress.type = current.type;
   workInProgress.ref = current.ref;

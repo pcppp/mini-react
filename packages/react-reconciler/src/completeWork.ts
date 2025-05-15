@@ -12,8 +12,11 @@ import {
   HostRoot,
   HostText,
 } from './workTags';
-import { NoFlags } from './fiberFlags';
+import { NoFlags, Update } from './fiberFlags';
 
+function markUpdate(fiber: FiberNode) {
+  fiber.flags |= Update;
+}
 export const completeWork = (wip: FiberNode) => {
   /*
     归是从叶子到根节点的,可以将叶子一步步插入进入父节点,从而构建离屏的dom树
@@ -38,6 +41,11 @@ export const completeWork = (wip: FiberNode) => {
     case HostText:
       if (current !== null && wip.stateNode) {
         // update
+        const oldText = wip.memoizedProps;
+        const newText = wip.pendingProps;
+        if (oldText !== newText) {
+          markUpdate(wip);
+        }
       } else {
         // mount
         // 构建DOM
