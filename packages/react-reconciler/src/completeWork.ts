@@ -41,7 +41,7 @@ export const completeWork = (wip: FiberNode) => {
     case HostText:
       if (current !== null && wip.stateNode) {
         // update
-        const oldText = wip.memoizedProps;
+        const oldText = current.memoizedProps.content;
         const newText = wip.pendingProps;
         if (oldText !== newText) {
           markUpdate(wip);

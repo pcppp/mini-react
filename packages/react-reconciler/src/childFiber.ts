@@ -16,7 +16,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     const deletions = returnFiber.deletions;
     if (deletions === null) {
       returnFiber.deletions = [childToDelete];
-      returnFiber.flags = ChildDeletion;
+      returnFiber.flags |= ChildDeletion;
     } else {
       deletions.push(childToDelete);
     }
@@ -45,8 +45,8 @@ function ChildReconciler(shouldTrackEffects: boolean) {
         } else {
           if (__DEV__) {
             console.warn('还未实现的react类型');
+            break work;
           }
-          break work;
         }
       } else {
         // 删掉旧的
@@ -67,15 +67,14 @@ function ChildReconciler(shouldTrackEffects: boolean) {
       // update
       if (currentFiber.tag === HostText) {
         // 判断出当前要进行Text更新,如果节点之前就是Text,那么就可以复用
-        const existing = createWorkInProgress(currentFiber, content);
+        const existing = useFiber(currentFiber, { content });
         existing.return = returnFiber;
         return existing;
-      } else {
-        deleteChild(returnFiber, currentFiber);
-        break work;
       }
+      deleteChild(returnFiber, currentFiber);
+      break work;
     }
-    let fiber = new FiberNode(HostText, { content }, null);
+    const fiber = new FiberNode(HostText, { content }, null);
     fiber.return = returnFiber;
     return fiber;
   }

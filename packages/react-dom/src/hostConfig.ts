@@ -22,7 +22,7 @@ export const appendChildToContainer = appendInitialChild;
 export function commitUpdate(fiber: FiberNode) {
   switch (fiber.tag) {
     case HostText:
-      const text = fiber.memoizedProps.content;
+      const text = fiber.memoizedProps?.content;
       return commitTextUpdate(fiber.stateNode, text);
     default:
       if (__DEV__) {
