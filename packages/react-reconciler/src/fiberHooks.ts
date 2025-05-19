@@ -31,8 +31,11 @@ export function renderWithHooks(wip: FiberNode) {
   }
   const Component = wip.type;
   const props = wip.pendingProps;
+  // 执行func中的hook
   const children = Component(props);
-
+  //  重置
+  workInProgressHook = null;
+  currentHook = null;
   currentlyRenderFiber = null;
   return children;
 }
@@ -49,6 +52,7 @@ const updateDispatcher: Dispatcher = {
  * @return {*}
  */
 function updateState<State>(): [State, Dispatch<State>] {
+  // 状态隔离
   const hook = updateWorkInProgressHook();
   // 计算新的state的逻辑
   const queue = hook.updateQueue as UpdateQueue<State>;
