@@ -21,7 +21,6 @@ export const beginWork = (wip: FiberNode) => {
       return null;
     case FunctionComponent:
       return updateFunctionComponent(wip);
-
     default:
       if (__DEV__) {
         console.warn('未实现的类型');

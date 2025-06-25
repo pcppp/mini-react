@@ -80,7 +80,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
   }
   function placeSingleChild(fiber: FiberNode) {
     if (shouldTrackEffects && fiber.alternate === null) {
-      //标记副作用 && 首屏渲染
+      // 非首屏渲染 && 是一个新创建的节点
       fiber.flags = Placement;
     }
     return fiber;
